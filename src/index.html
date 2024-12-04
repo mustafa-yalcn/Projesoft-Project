@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en" class="light"><head>
+          <meta charset="UTF-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+      <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+          <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        .listView .product-img{ max-width: 6rem; display: block; margin-right: 1rem;}
+        .listView img{max-height: 4rem;max-width: 5rem;padding: 0.5rem;}
+        .boxview .shop-bag{display: block}
+        .custom-dropdown-container {position: relative; }
+        .shop-bag img{    max-height: 6rem;  max-width: 5rem;padding: 0.5rem;}
+        .color-options { background-color: #ffffff;position: absolute;right: 10px;bottom: 10px;display: flex;align-items: center;justify-content: center;z-index: 5;border-radius: 10px; box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.2); padding: 2px 4px;}
+        .color-options div .color-option {display: inline-block;width: 15px; height: 15px;border: solid 1px #ffffff;background-color: pink;border-radius: 50%;}
+        .color-options div .color-option:nth-child(1) {background-image: linear-gradient(to right, #3023ae 0%, #53a0fd 48%, #b4ec51 101%); z-index: 2;}
+        .color-options div .color-option:nth-child(2) { background-image: linear-gradient(to right, #6bceb4 0%, #f98cc2 48%, #fff781 101%);z-index: 1;margin-left: -6px;}
+    /* Dropdown menüsü butonu */
+    .custom-dropdown-button {padding: 10px;cursor: pointer; font-weight: bold;background: linear-gradient(145deg, rgb(232 174 12), rgb(0 224 255)); width: 50px;border-radius: 15px;}
+    .custom-dropdown { display: none; position: absolute; width: 100%;margin-top: 5px; background-color: white;border: 1px solid #ccc; border-radius: 5px;box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);z-index: 1;}
+    .dropdown-option { padding: 10px; cursor: pointer;margin: 1px;border-radius: 10px;}
+    .dropdown-option:hover {  background-color: #f0f0f0;}
+    .dropdown-option span { font-weight: bold;}
+    .custom-dropdown.show { display: block;}
+ /*  popup */
+#variantPopup { background-color: rgba(0, 0, 0, 0.7);}
+
+#variantPopup .bg-white { background-color: #fff; border-radius: 12px;box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);}
+#variantPopup select, #variantPopup button {transition: all 0.3s ease;}
+
+#variantPopup select:focus, #variantPopup button:hover {transform: scale(1.05); outline: none; }
+button { cursor: pointer;}
+
+button:focus { outline: none;}
+
+button:active { opacity: 0.8;}
+
+#colorSelect .w-8 { transition: transform 0.3s ease;}
+
+button.w-8:hover { transform: scale(1.2);}
+
+        button.active {  border: 3px solid #000;  transform: scale(1.2); }
+button.active { border: 3px solid #4CAF50;   box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);}
+
+ #filterBtn { background-color: #007bff;color: white;  padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;}
+ #filterBtn:hover { background-color: #0056b3; }
+  #filterPanel {display: none; position: absolute;background-color: #ffffff;box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.53);border-radius: 10px;padding: 20px;transition: all 0.3s ease;z-index: 1000;max-height: 80vh;overflow-y: auto;border: 1px solid #dadada;}
+#filterPanel h3 { font-size: 20px; font-weight: 600; margin-bottom: 20px; color: #333;}
+ select { width:11rem; padding: 10px;font-size: 16px;border: 1px solid #ddd;border-radius: 8px;background-color: #f8f9fa; margin-bottom: 15px;transition: border-color 0.3s; }
+ select:focus {  border-color: #007bff; outline: none;}
+.filter-container {display: flex;justify-content: space-between;gap: 10px; margin-bottom: 20px;align-items: center; }
+ .filter-container label{display: inline-block;width: 100%;}
+  .filter-container > div {  flex: 1; }
+ #applyFilters {width: 10rem;padding: 12px;background-color: #28a745;color: white;border: none;border-radius: 8px;font-size: 16px; cursor: pointer;transition: background-color 0.3s ease;float: right;}
+        #applyFilters:hover { background-color: #218838; }
+        #closePanel { position: absolute; top: 10px;right: 10px;background: none;border: none;color: #aaa;font-size: 24px; cursor: pointer;}
+        #closePanel:hover { color: #000;}
+        .filter-container select{    padding-left: 3px; height: 40px;}
+       .colorDisplay { background: linear-gradient(to right,#765dfc,#648afb);}
+    </style>
+
+    </head>
+
+        <body>
+          <div class="antialiased bg-gray-50 dark:bg-gray-900">
+
+
+    <!-- Sidebar -->
+
+    <aside class="fixed top-0 left-0  z-40 w-64 h-screen pt-14 transition-transform -translate-x-full  border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700 colorDisplay" aria-label="Sidenav" id="drawer-navigation" aria-hidden="true" >
+        <div href="" class="px-5 text-center mr-4">
+            
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 157.882 45.54" style="width: 135px;">
+  <g id="Group_35" data-name="Group 35" transform="translate(-2114 172.071)">
+    <g id="Group_33" data-name="Group 33">
+      <rect id="Rectangle_14" data-name="Rectangle 14" width="0.543" height="0.543" transform="translate(2229.302 -131.341)" fill="#fff"></rect>
+      <rect id="Rectangle_15" data-name="Rectangle 15" width="1.836" height="0.447" transform="translate(2223.506 -128.6)" fill="#fff"></rect>
+      <path id="Path_7" data-name="Path 7" d="M195.913,150.845a1.318,1.318,0,0,0-.728-.2,1.221,1.221,0,0,0-1.188.775,2.331,2.331,0,0,0-.166.91,2.26,2.26,0,0,0,.179.957,1.225,1.225,0,0,0,.5.554,1.542,1.542,0,0,0,.762.179,1.843,1.843,0,0,0,.489-.057,1.338,1.338,0,0,0,.382-.169,2.161,2.161,0,0,0,.335-.281l-.328-.289a1.519,1.519,0,0,1-.255.213.955.955,0,0,1-.273.122,1.306,1.306,0,0,1-.335.039,1.015,1.015,0,0,1-.53-.133.826.826,0,0,1-.328-.39,1.553,1.553,0,0,1-.112-.616h2.223v-.221a2.054,2.054,0,0,0-.161-.848,1.226,1.226,0,0,0-.463-.551m-1.6,1.256c.005-.088.008-.161.016-.221a1.333,1.333,0,0,1,.029-.164,1.13,1.13,0,0,1,.057-.164.773.773,0,0,1,.179-.263.79.79,0,0,1,.265-.172.882.882,0,0,1,.325-.062.842.842,0,0,1,.325.062.791.791,0,0,1,.265.172.812.812,0,0,1,.179.263,1.382,1.382,0,0,1,.057.164,1.335,1.335,0,0,1,.029.164c.008.06.01.133.016.221Z" transform="translate(2025.711 -280.556)" fill="#fff"></path>
+      <path id="Path_8" data-name="Path 8" d="M221.277,146.9H220.8v1.032h-.416v.369h.416v2.023a1.024,1.024,0,0,0,.094.445.737.737,0,0,0,.281.317.875.875,0,0,0,.468.12h.341v-.416h-.255a.432.432,0,0,1-.341-.127.523.523,0,0,1-.109-.354V148.3h.7v-.369h-.7V146.9Z" transform="translate(2006.065 -277.781)" fill="#fff"></path>
+      <rect id="Rectangle_16" data-name="Rectangle 16" width="0.481" height="3.297" transform="translate(2229.331 -129.867)" fill="#fff"></rect>
+      <path id="Path_9" data-name="Path 9" d="M239.125,151.677a.9.9,0,0,1,.125-.231.859.859,0,0,1,.325-.281.963.963,0,0,1,.437-.1,1.04,1.04,0,0,1,.281.034.757.757,0,0,1,.239.117,1.374,1.374,0,0,1,.237.218l.33-.309a1.946,1.946,0,0,0-.333-.291,1.173,1.173,0,0,0-.346-.153,1.637,1.637,0,0,0-.408-.044,1.55,1.55,0,0,0-.577.1,1.269,1.269,0,0,0-.465.317,1.48,1.48,0,0,0-.307.528,2.333,2.333,0,0,0-.112.738,2.262,2.262,0,0,0,.112.738,1.48,1.48,0,0,0,.307.528,1.3,1.3,0,0,0,.465.317,1.55,1.55,0,0,0,.577.1,1.651,1.651,0,0,0,.408-.044,1.117,1.117,0,0,0,.346-.156,1.825,1.825,0,0,0,.333-.291l-.33-.315a1.485,1.485,0,0,1-.237.218.765.765,0,0,1-.239.12.943.943,0,0,1-.281.036.963.963,0,0,1-.437-.1.822.822,0,0,1-.325-.281.946.946,0,0,1-.125-.231,1.4,1.4,0,0,1-.07-.286,3.245,3.245,0,0,1,0-.733,1.247,1.247,0,0,1,.07-.286" transform="translate(1992.62 -280.548)" fill="#fff"></path>
+      <path id="Path_10" data-name="Path 10" d="M253.1,150.625a2.4,2.4,0,0,0-.476.042,1.121,1.121,0,0,0-.377.148,1.286,1.286,0,0,0-.315.3l.328.3a.946.946,0,0,1,.208-.221.783.783,0,0,1,.263-.12,1.589,1.589,0,0,1,.359-.036,1.224,1.224,0,0,1,.486.081.545.545,0,0,1,.273.242.856.856,0,0,1,.086.4v.315h-.991a1.48,1.48,0,0,0-.621.12.86.86,0,0,0-.385.33.953.953,0,0,0-.133.5,1.046,1.046,0,0,0,.065.372.786.786,0,0,0,.185.3.833.833,0,0,0,.231.174,1.11,1.11,0,0,0,.3.1,2.244,2.244,0,0,0,.4.029,1.858,1.858,0,0,0,.385-.034.88.88,0,0,0,.3-.112,1.376,1.376,0,0,0,.268-.211v.315h.484V151.72a1.016,1.016,0,0,0-.328-.819,1.521,1.521,0,0,0-.991-.281m.835,2.176a1.2,1.2,0,0,1-.042.346.49.49,0,0,1-.125.224.724.724,0,0,1-.221.146.984.984,0,0,1-.247.062,2.286,2.286,0,0,1-.27.01.95.95,0,0,1-.575-.138.492.492,0,0,1-.182-.424.523.523,0,0,1,.182-.434.869.869,0,0,1,.554-.148h.926v.356Z" transform="translate(1982.807 -280.534)" fill="#fff"></path>
+      <path id="Path_11" data-name="Path 11" d="M269.037,150.64a1.244,1.244,0,0,0-.369.055,1.206,1.206,0,0,0-.32.151.844.844,0,0,0-.234.237v-.4h-.484v3.3h.484v-2.023a1.015,1.015,0,0,1,.1-.452.768.768,0,0,1,.273-.315.739.739,0,0,1,.419-.117,1.123,1.123,0,0,1,.221.021.566.566,0,0,1,.177.078.908.908,0,0,1,.172.143l.354-.361a1,1,0,0,0-.364-.242,1.175,1.175,0,0,0-.426-.065" transform="translate(1971.101 -280.548)" fill="#fff"></path>
+      <path id="Path_12" data-name="Path 12" d="M280.243,150.845a1.318,1.318,0,0,0-.728-.2,1.222,1.222,0,0,0-1.191.775,2.287,2.287,0,0,0-.164.91,2.26,2.26,0,0,0,.179.957,1.211,1.211,0,0,0,.5.554,1.536,1.536,0,0,0,.762.179,1.843,1.843,0,0,0,.489-.057,1.371,1.371,0,0,0,.382-.169,2.047,2.047,0,0,0,.335-.281l-.328-.289a1.519,1.519,0,0,1-.255.213.955.955,0,0,1-.273.122,1.321,1.321,0,0,1-.335.039,1.015,1.015,0,0,1-.53-.133.841.841,0,0,1-.328-.39,1.553,1.553,0,0,1-.112-.616h2.223v-.221a2.054,2.054,0,0,0-.161-.848,1.26,1.26,0,0,0-.463-.551m-1.6,1.256c.005-.088.01-.161.016-.221a1.336,1.336,0,0,1,.029-.164,1.5,1.5,0,0,1,.055-.164.812.812,0,0,1,.179-.263.79.79,0,0,1,.265-.172.893.893,0,0,1,.325-.062.832.832,0,0,1,.325.062.79.79,0,0,1,.265.172.813.813,0,0,1,.179.263,1.393,1.393,0,0,1,.057.164,1.347,1.347,0,0,1,.029.164c.005.06.01.133.016.221h-1.742Z" transform="translate(1963.309 -280.556)" fill="#fff"></path>
+      <path id="Path_13" data-name="Path 13" d="M293.377,146.9H292.9v1.032h-.416v.369h.416v2.023a1.023,1.023,0,0,0,.094.445.737.737,0,0,0,.281.317.868.868,0,0,0,.468.12h.341v-.416h-.255a.428.428,0,0,1-.341-.127.523.523,0,0,1-.109-.354V148.3h.7v-.369h-.7V146.9Z" transform="translate(1952.713 -277.781)" fill="#fff"></path>
+      <path id="Path_14" data-name="Path 14" d="M311.979,152.813a1.009,1.009,0,0,1-.1.484.679.679,0,0,1-.286.294.915.915,0,0,1-.434.1.887.887,0,0,1-.429-.1.657.657,0,0,1-.276-.294,1.123,1.123,0,0,1-.1-.486V150.78h-.481v2.1a1.63,1.63,0,0,0,.078.52,1.064,1.064,0,0,0,.255.406,1.008,1.008,0,0,0,.369.229,1.408,1.408,0,0,0,.484.078,1.266,1.266,0,0,0,.515-.1,1.187,1.187,0,0,0,.416-.3v.369h.476v-3.3h-.484v2.031Z" transform="translate(1939.845 -280.652)" fill="#fff"></path>
+      <path id="Path_15" data-name="Path 15" d="M324.8,151.229h1.734l-1.836,2.452v.416h2.392v-.432h-1.841l1.841-2.457V150.8H324.8Z" transform="translate(1928.871 -280.667)" fill="#fff"></path>
+      <path id="Path_16" data-name="Path 16" d="M343.181,150.957a1.051,1.051,0,0,0-.367-.226,1.348,1.348,0,0,0-.484-.081,1.374,1.374,0,0,0-.621.138,1.3,1.3,0,0,0-.465.411,1.051,1.051,0,0,0-.408-.411,1.275,1.275,0,0,0-.6-.138,1.3,1.3,0,0,0-.515.1,1.149,1.149,0,0,0-.416.3v-.361h-.481v3.3h.481v-2.031a1.039,1.039,0,0,1,.1-.484.679.679,0,0,1,.286-.294.923.923,0,0,1,.434-.1.9.9,0,0,1,.432.1.668.668,0,0,1,.281.294,1.114,1.114,0,0,1,.1.486v2.031h.481v-2.083a.866.866,0,0,1,.107-.445.689.689,0,0,1,.291-.281.908.908,0,0,1,.429-.1.919.919,0,0,1,.432.1.663.663,0,0,1,.278.294,1.079,1.079,0,0,1,.1.486v2.031h.484V151.88a1.412,1.412,0,0,0-.088-.517,1.124,1.124,0,0,0-.265-.4" transform="translate(1918.423 -280.556)" fill="#fff"></path>
+      <path id="Path_17" data-name="Path 17" d="M363.01,150.625a2.355,2.355,0,0,0-.473.042,1.122,1.122,0,0,0-.377.148,1.288,1.288,0,0,0-.315.3l.328.3a.946.946,0,0,1,.208-.221.783.783,0,0,1,.263-.12,1.614,1.614,0,0,1,.361-.036,1.215,1.215,0,0,1,.486.081.556.556,0,0,1,.273.242.856.856,0,0,1,.086.4v.315h-.991a1.479,1.479,0,0,0-.621.12.86.86,0,0,0-.385.33.929.929,0,0,0-.133.5,1.046,1.046,0,0,0,.065.372.786.786,0,0,0,.185.3.886.886,0,0,0,.234.174,1.081,1.081,0,0,0,.3.1,2.245,2.245,0,0,0,.4.029,1.858,1.858,0,0,0,.385-.034.915.915,0,0,0,.3-.112,1.376,1.376,0,0,0,.268-.211v.315h.484V151.72a1.016,1.016,0,0,0-.328-.819,1.521,1.521,0,0,0-.991-.281m.824,2.176a1.2,1.2,0,0,1-.042.346.47.47,0,0,1-.127.224.724.724,0,0,1-.221.146.965.965,0,0,1-.244.062,2.286,2.286,0,0,1-.27.01.95.95,0,0,1-.575-.138.5.5,0,0,1-.182-.424.523.523,0,0,1,.182-.434.873.873,0,0,1,.556-.148h.923Z" transform="translate(1901.477 -280.534)" fill="#fff"></path>
+      <path id="Path_18" data-name="Path 18" d="M379.764,150.957a1,1,0,0,0-.364-.229,1.393,1.393,0,0,0-.481-.078,1.3,1.3,0,0,0-.512.1,1.162,1.162,0,0,0-.413.3v-.361h-.484v3.3h.484v-2.031a1.04,1.04,0,0,1,.1-.484.673.673,0,0,1,.283-.294.981.981,0,0,1,.863,0,.682.682,0,0,1,.281.294,1.045,1.045,0,0,1,.1.486v2.031h.481v-2.111a1.471,1.471,0,0,0-.083-.517,1.078,1.078,0,0,0-.26-.4" transform="translate(1889.793 -280.556)" fill="#fff"></path>
+      <rect id="Rectangle_17" data-name="Rectangle 17" width="0.484" height="3.297" transform="translate(2271.399 -129.867)" fill="#fff"></rect>
+      <path id="Path_19" data-name="Path 19" d="M57.505,33.532Q55.473,35.4,55.48,39.581V55.437h3.932V39.854a4.715,4.715,0,0,1,1.105-3.487,4.139,4.139,0,0,1,3.237-.944V31.9q-4.2-.254-6.246,1.63" transform="translate(2128.086 -192.665)" fill="#fff"></path>
+      <path id="Path_20" data-name="Path 20" d="M140.139,57.616a4.028,4.028,0,0,1-.3,1.721,1.835,1.835,0,0,1-1.035.96,4.535,4.535,0,0,1-1.95.2v3.794a8.531,8.531,0,0,0,4.114-.51,4.615,4.615,0,0,0,2.33-2.223,8.221,8.221,0,0,0,.731-3.711V31.98h-3.885V57.616Z" transform="translate(2067.875 -192.743)" fill="#fff"></path>
+      <path id="Path_21" data-name="Path 21" d="M104.841,48.439V36.969a7.435,7.435,0,0,0-.762-3.466,5.145,5.145,0,0,0-2.163-2.179,7.954,7.954,0,0,0-6.761,0A5.145,5.145,0,0,0,92.992,33.5a7.428,7.428,0,0,0-.762,3.466v11.47a7.45,7.45,0,0,0,.762,3.466,5.145,5.145,0,0,0,2.163,2.179,7.954,7.954,0,0,0,6.761,0,5.145,5.145,0,0,0,2.163-2.179,7.45,7.45,0,0,0,.762-3.466m-3.885-.229a3.62,3.62,0,0,1-.663,2.345,2.415,2.415,0,0,1-3.521,0,3.62,3.62,0,0,1-.663-2.345V37.2a3.62,3.62,0,0,1,.663-2.345,2.415,2.415,0,0,1,3.521,0,3.62,3.62,0,0,1,.663,2.345Z" transform="translate(2100.892 -191.7)" fill="#fff"></path>
+      <path id="Path_22" data-name="Path 22" d="M188.077,41.686V36.979a7.5,7.5,0,0,0-.746-3.466,5.081,5.081,0,0,0-2.148-2.179,7.925,7.925,0,0,0-6.748,0,5.159,5.159,0,0,0-2.163,2.179,7.427,7.427,0,0,0-.762,3.466v11.47a7.45,7.45,0,0,0,.762,3.466,5.159,5.159,0,0,0,2.163,2.179,7.257,7.257,0,0,0,3.38.754,7.179,7.179,0,0,0,3.367-.754,5.066,5.066,0,0,0,2.148-2.179,7.55,7.55,0,0,0,.746-3.466V46.9h-3.885v1.326a3.718,3.718,0,0,1-.64,2.345,2.124,2.124,0,0,1-1.737.762,2.192,2.192,0,0,1-1.76-.762,3.62,3.62,0,0,1-.663-2.345v-2.33l8.682-4.2Zm-8.682-4.48a3.62,3.62,0,0,1,.663-2.345,2.192,2.192,0,0,1,1.76-.762,2.124,2.124,0,0,1,1.737.762,3.717,3.717,0,0,1,.64,2.345v2.239l-4.8,2.514V37.206Z" transform="translate(2039.267 -191.708)" fill="#fff"></path>
+      <path id="Path_23" data-name="Path 23" d="M9.676,7.454A7.06,7.06,0,0,0,6.3,6.7a7.06,7.06,0,0,0-3.378.754A5.147,5.147,0,0,0,.759,9.631,7.434,7.434,0,0,0,0,13.089V36.822H3.926V25.23H6.254A7.443,7.443,0,0,0,9.9,24.424a4.792,4.792,0,0,0,2.054-2.252,8.184,8.184,0,0,0,.64-3.425V13.089a7.413,7.413,0,0,0-.762-3.461A5.133,5.133,0,0,0,9.676,7.451m-1,11.116A3.705,3.705,0,0,1,8.079,20.8a2.142,2.142,0,0,1-1.825.829H3.926V13.318A3.6,3.6,0,0,1,4.566,11,2.133,2.133,0,0,1,6.3,10.26,2.125,2.125,0,0,1,8.035,11a3.61,3.61,0,0,1,.64,2.319v5.247Z" transform="translate(2169.139 -174.037)" fill="#fff"></path>
+    </g>
+    <g id="Group_34" data-name="Group 34">
+      <path id="Path_2" data-name="Path 2" d="M240.693,7.973c-2.632-.138-4.649.434-6.033,1.711s-2.083,3.263-2.091,5.957V29.789a4.656,4.656,0,0,1-1,3.308,3.929,3.929,0,0,1-3.2.983v3.651q3.947.2,6.033-1.711t2.093-5.957V15.914a4.656,4.656,0,0,1,1-3.308,3.929,3.929,0,0,1,3.2-.983V7.973Z" transform="translate(2000.152 -174.964)" fill="#67bc49"></path>
+      <path id="Path_3" data-name="Path 3" d="M336.623,1.043a5.23,5.23,0,0,0-2.231,1.3,5.375,5.375,0,0,0-1.272,2.124,8.675,8.675,0,0,0-.411,2.743V32.393h3.885V12.378h3.061V8.86h-3.061V7.443a2.936,2.936,0,0,1,.754-2.314,3.257,3.257,0,0,1,2.535-.564V.77a8.718,8.718,0,0,0-3.261.276" transform="translate(1922.944 -169.621)" fill="#67bc49"></path>
+      <path id="Path_4" data-name="Path 4" d="M374.948,11.837V8.318h-3.2V1.875a1.83,1.83,0,0,0-.268-.952,1.912,1.912,0,0,0-.7-.671,1.985,1.985,0,0,0-1-.252,1.832,1.832,0,0,0-.967.252,1.888,1.888,0,0,0-.686.671,1.806,1.806,0,0,0-.268.952V25.639a7.821,7.821,0,0,0,.738,3.669,4.309,4.309,0,0,0,2.317,2.01,10.286,10.286,0,0,0,4.028.533V28.333a4.622,4.622,0,0,1-1.89-.268,1.824,1.824,0,0,1-1-1.006,4.63,4.63,0,0,1-.3-1.883V11.831h3.2Z" transform="translate(1896.934 -169.079)" fill="#67bc49"></path>
+      <path id="Path_5" data-name="Path 5" d="M283.739,31.334a7.96,7.96,0,0,0-6.763,0,5.145,5.145,0,0,0-2.163,2.179,7.427,7.427,0,0,0-.762,3.466v11.47a7.45,7.45,0,0,0,.762,3.466,5.145,5.145,0,0,0,2.163,2.179,7.96,7.96,0,0,0,6.763,0,5.145,5.145,0,0,0,2.163-2.179,7.45,7.45,0,0,0,.762-3.466V36.979a7.435,7.435,0,0,0-.762-3.466,5.145,5.145,0,0,0-2.163-2.179m-.96,16.884a3.62,3.62,0,0,1-.663,2.345,2.415,2.415,0,0,1-3.521,0,3.619,3.619,0,0,1-.663-2.345V37.206a3.619,3.619,0,0,1,.663-2.345,2.415,2.415,0,0,1,3.521,0,3.62,3.62,0,0,1,.663,2.345Z" transform="translate(1966.351 -191.708)" fill="#67bc49"></path>
+      <path id="Path_6" data-name="Path 6" d="M152.41.252a1.965,1.965,0,0,0-1-.252,1.832,1.832,0,0,0-.967.252,1.887,1.887,0,0,0-.686.671,1.806,1.806,0,0,0-.268.952V4.8h3.885V1.875a1.806,1.806,0,0,0-.268-.952,1.912,1.912,0,0,0-.7-.671" transform="translate(2058.521 -169.079)" fill="#67bc49"></path>
+      <path id="Path_24" data-name="Path 24" d="M37.871,38.041a5.834,5.834,0,0,1-4.4,2.01H9.387a5.841,5.841,0,0,1-5.777-6.645l.8-5.566,2.222-15.6A5.83,5.83,0,0,1,12.392,7.25H30.464a6.031,6.031,0,0,1,2.37.508,5.828,5.828,0,0,1,3.386,4.486l3.026,21.162a5.856,5.856,0,0,1-1.376,4.634Z" transform="translate(2110.446 -166.623)" fill="#00aa41"></path>
+      <path id="Path_25" data-name="Path 25" d="M32.381,7.758A28.52,28.52,0,0,1,5.1,27.883a10.314,10.314,0,0,1-1.143-.042l2.222-15.6A5.83,5.83,0,0,1,11.938,7.25H30.011A6.031,6.031,0,0,1,32.381,7.758Z" transform="translate(2110.9 -166.623)" fill="#5cd95b"></path>
+      <path id="Path_26" data-name="Path 26" d="M24.151,17.122H9.337A1.587,1.587,0,0,1,7.75,15.534V10.244a8.994,8.994,0,1,1,17.988,0v5.291a1.587,1.587,0,0,1-1.587,1.587ZM10.924,13.947H22.563v-3.7a5.82,5.82,0,0,0-11.639,0Z" transform="translate(2115.13 -173.321)" fill="#5cd95b"></path>
+      <path id="Path_27" data-name="Path 27" d="M16.186,22.889A7.946,7.946,0,0,1,8.25,14.953V12.837a1.587,1.587,0,1,1,3.174,0v2.116a4.761,4.761,0,1,0,9.523,0V12.837a1.587,1.587,0,1,1,3.174,0v2.116A7.946,7.946,0,0,1,16.186,22.889Z" transform="translate(2115.688 -162.159)" fill="#e5f9f8"></path>
+    </g>
+  </g>
+</svg>
+          </div>
+      <div class="overflow-y-auto py-5 px-3 h-full  text-white dark:bg-gray-800 " id="div1">
+       
+        <form action="#" method="GET" class="md:hidden mb-2">
+          <label for="sidebar-search" class="sr-only">Search</label>
+          <div class="relative">
+            <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"></path>
+              </svg>
+            </div>
+            <input type="text" name="search" id="sidebar-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ara" >
+          </div>
+        </form>
+        <ul class="space-y-2">
+          <li>
+            <a href="#" class="flex items-center p-2 text-base text-white font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              <svg aria-hidden="true" class="w-6 h-6 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+              </svg>
+              <span class="ml-3 group-hover:text-gray-900">Ana Sayfa</span>
+            </a>
+          </li>
+          <li>
+            <button type="button" class="flex items-center text-white p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages" aria-expanded="false">
+              <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6  transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="flex-1 ml-3 text-left text-white whitespace-nowrap group-hover:text-gray-900">Kategoriler</span>
+              <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            <ul id="dropdown-pages" class="py-2 space-y-2 hidden">
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Kategori 1</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Kategori 2</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Kategori 3</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <button type="button" class="flex items-center text-white p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-sales" data-collapse-toggle="dropdown-sales">
+              <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6  transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="flex-1 ml-3 text-white text-left whitespace-nowrap group-hover:text-gray-900">Siparişler</span>
+              <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            <ul id="dropdown-sales" class="hidden py-2 space-y-2">
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Products</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Billing</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Invoice</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" class="flex items-center p-2 text-base text-white font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+              <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6  transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path>
+                <path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path>
+              </svg>
+              <span class="flex-1 ml-3 whitespace-nowrap text-white group-hover:text-gray-900">Ödeme Yap</span>
+              <span class="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800 bg-primary-100 dark:bg-primary-200 dark:text-primary-800">
+                4
+              </span>
+            </a>
+          </li>
+          <li>
+            <button type="button" class="flex items-center text-white p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-authentication" data-collapse-toggle="dropdown-authentication">
+              <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6  transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="flex-1 ml-3 text-left whitespace-nowrap text-white group-hover:text-gray-900">Üyelik</span>
+              <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            <ul id="dropdown-authentication" class="hidden py-2 space-y-2">
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Giriş</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Kayıt Ol</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-medium text-white rounded-lg transition duration-75 group-hover:text-gray-900 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Şifre Güncelle</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
+        
+         
+          <li>
+            <a href="#" class="flex items-center p-2 text-white text-base font-medium text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+              <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6  transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="ml-3 text-white group-hover:text-gray-900">Yardım</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="hidden absolute bottom-0 left-0 justify-center p-4 space-x-4 w-full lg:flex bg-white dark:bg-gray-800 z-20" style="display:none;">
+        <a href="#" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-600">
+          <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path>
+          </svg>
+        </a>
+        <a href="#" data-tooltip-target="tooltip-settings" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer dark:text-gray-400 dark:hover:text-white hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-600">
+          <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+          </svg>
+        </a>
+        <div id="tooltip-settings" role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip" data-popper-placement="top" style="position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate(70px, -64px);">
+          Settings page
+          <div class="tooltip-arrow" data-popper-arrow="" style="position: absolute; left: 0px; transform: translate(59px, 0px);"></div>
+        </div>
+        <button type="button" data-dropdown-toggle="language-dropdown" class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer dark:hover:text-white dark:text-gray-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-600">
+          <svg aria-hidden="true" class="h-5 w-5 rounded-full mt-0.5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 3900 3900">
+            <path fill="#b22234" d="M0 0h7410v3900H0z"></path>
+            <path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"></path>
+            <path fill="#3c3b6e" d="M0 0h2964v2100H0z"></path>
+            <g fill="#fff">
+              <g id="d">
+                <g id="c">
+                  <g id="e">
+                    <g id="b">
+                      <path id="a" d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"></path>
+                      <use xlink:href="#a" y="420"></use>
+                      <use xlink:href="#a" y="840"></use>
+                      <use xlink:href="#a" y="1260"></use>
+                    </g>
+                    <use xlink:href="#a" y="1680"></use>
+                  </g>
+                  <use xlink:href="#b" x="247" y="210"></use>
+                </g>
+                <use xlink:href="#c" x="494"></use>
+              </g>
+              <use xlink:href="#d" x="988"></use>
+              <use xlink:href="#c" x="1976"></use>
+              <use xlink:href="#e" x="2470"></use>
+            </g>
+          </svg>
+        </button>
+        <!-- Dropdown -->
+        <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700" id="language-dropdown" data-popper-placement="bottom" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(184px, 890px);">
+          <ul class="py-1" role="none">
+            <li>
+              <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:text-white dark:text-gray-300 dark:hover:bg-gray-600" role="menuitem">
+                <div class="inline-flex items-center">
+                  <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-us" viewBox="0 0 512 512">
+                    <g fill-rule="evenodd">
+                      <g stroke-width="1pt">
+                        <path fill="#bd3d44" d="M0 0h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0z" transform="scale(3.9385)"></path>
+                        <path fill="#fff" d="M0 10h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0zm0 20h247v10H0z" transform="scale(3.9385)"></path>
+                      </g>
+                      <path fill="#192f5d" d="M0 0h98.8v70H0z" transform="scale(3.9385)"></path>
+                      <path fill="#fff" d="M8.2 3l1 2.8H12L9.7 7.5l.9 2.7-2.4-1.7L6 10.2l.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7L74 8.5l-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 7.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 24.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 21.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 38.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 35.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 52.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 49.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm-74.1 7l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7H65zm16.4 0l1 2.8H86l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm-74 7l.8 2.8h3l-2.4 1.7.9 2.7-2.4-1.7L6 66.2l.9-2.7-2.4-1.7h3zm16.4 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8H45l-2.4 1.7 1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9zm16.4 0l1 2.8h2.8l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h3zm16.5 0l.9 2.8h2.9l-2.3 1.7.9 2.7-2.4-1.7-2.3 1.7.9-2.7-2.4-1.7h2.9zm16.5 0l.9 2.8h2.9L92 63.5l1 2.7-2.4-1.7-2.4 1.7 1-2.7-2.4-1.7h2.9z" transform="scale(3.9385)"></path>
+                    </g>
+                  </svg>
+                  English (US)
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                <div class="inline-flex items-center">
+                  <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-de" viewBox="0 0 512 512">
+                    <path fill="#ffce00" d="M0 341.3h512V512H0z"></path>
+                    <path d="M0 0h512v170.7H0z"></path>
+                    <path fill="#d00" d="M0 170.7h512v170.6H0z"></path>
+                  </svg>
+                  Deutsch
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+                <div class="inline-flex items-center">
+                  <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-it" viewBox="0 0 512 512">
+                    <g fill-rule="evenodd" stroke-width="1pt">
+                      <path fill="#fff" d="M0 0h512v512H0z"></path>
+                      <path fill="#009246" d="M0 0h170.7v512H0z"></path>
+                      <path fill="#ce2b37" d="M341.3 0H512v512H341.3z"></path>
+                    </g>
+                  </svg>
+                  Italiano
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:text-white dark:text-gray-300 dark:hover:bg-gray-600" role="menuitem">
+                <div class="inline-flex items-center">
+                  <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="flag-icon-css-cn" viewBox="0 0 512 512">
+                    <defs>
+                      <path id="a" fill="#ffde00" d="M1-.3L-.7.8 0-1 .6.8-1-.3z"></path>
+                    </defs>
+                    <path fill="#de2910" d="M0 0h512v512H0z"></path>
+                    <use width="30" height="20" transform="matrix(76.8 0 0 76.8 128 128)" xlink:href="#a"></use>
+                    <use width="30" height="20" transform="rotate(-121 142.6 -47) scale(25.5827)" xlink:href="#a"></use>
+                    <use width="30" height="20" transform="rotate(-98.1 198 -82) scale(25.6)" xlink:href="#a"></use>
+                    <use width="30" height="20" transform="rotate(-74 272.4 -114) scale(25.6137)" xlink:href="#a"></use>
+                    <use width="30" height="20" transform="matrix(16 -19.968 19.968 16 256 230.4)" xlink:href="#a"></use>
+                  </svg>
+                  中文 (繁體)
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <main class="p-4 md:ml-64 h-auto">
+        <div class="mb-2">
+            <nav class="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700   z-50">
+      <div class="flex flex-wrap justify-between items-center">
+        <div class="flex justify-start items-center">
+          <button data-drawer-target="drawer-navigation" data-drawer-toggle="drawer-navigation" aria-controls="drawer-navigation" class="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <svg aria-hidden="true" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="sr-only">Toggle sidebar</span>
+          </button>
+          
+          <form action="#" method="GET" class="hidden md:block md:pl-2">
+            <label for="topbar-search" class="sr-only">Ara</label>
+            <div class="relative">
+              <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"></path>
+                </svg>
+              </div>
+              <input type="text" name="email" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Ara" style="width: 38rem;">
+            </div>
+          </form>
+        </div>
+        <div class="flex items-center lg:order-2">
+            <div class="custom-dropdown-container">
+    <!-- Dropdown butonu -->
+    <div class="custom-dropdown-button"></div>
+    
+    <!-- Dropdown seçenekleri -->
+    <div class="custom-dropdown">
+         <div class="dropdown-option" data-value="gradient-blue-purple" style="    background:linear-gradient(to right,#765dfc,#648afb);
+">
+            <span style="color: blue;"></span>
+        </div>
+        <div class="dropdown-option" data-value="gradient-blue-purple" style="background: linear-gradient(to right,#8930fd,#7c4bfc);
+">
+            <span style="color: blue;"></span>
+        </div>
+        <div class="dropdown-option" data-value="gradient-green-blue" style="background: linear-gradient(to right,#6094fa,#49ccf9);">
+            <span style="color: green;"></span>
+        </div>
+        <div class="dropdown-option" data-value="gradient-yellow-pink" style="background:linear-gradient(to right,#8930fd,#49ccf9);">
+            <span style="color: yellow;"></span>
+        </div>
+        <div class="dropdown-option" data-value="gradient-purple-orange" style="background: linear-gradient(to right,#38404700,#384047 8px,#384047);">
+            <span style="color: purple;"></span>
+        </div>
+         <div class="dropdown-option" data-value="gradient-purple-orange" style="background: linear-gradient( 270.98deg, #c62a2f -20.08%, #641723 70.89% );">
+            <span style="color: purple;"></span>
+        </div>
+         <div class="dropdown-option" data-value="gradient-purple-orange" style="background:linear-gradient( 92.42deg, #193b2d 32.92%, #299764 126.76% );">
+            <span style="color: purple;"></span>
+        </div>
+      
+    </div>
+</div>
+          <button type="button" data-drawer-toggle="drawer-navigation" aria-controls="drawer-navigation" class="p-2 mr-1 text-gray-500 rounded-lg md:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <span class="sr-only">Toggle search</span>
+            <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path clip-rule="evenodd" fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"></path>
+            </svg>
+          </button>
+        
+          <button type="button" data-dropdown-toggle="notification-dropdown" class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <span class="sr-only">View notifications</span>
+            <!-- Bell icon -->
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#6b7280" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M14 7h-4v3a1 1 0 0 1-2 0V7H6a1 1 0 0 0-.997.923l-.917 11.924A2 2 0 0 0 6.08 22h11.84a2 2 0 0 0 1.994-2.153l-.917-11.924A1 1 0 0 0 18 7h-2v3a1 1 0 1 1-2 0V7Zm-2-3a2 2 0 0 0-2 2v1H8V6a4 4 0 0 1 8 0v1h-2V6a2 2 0 0 0-2-2Z" clip-rule="evenodd"></path>
+</svg>
+          </button>
+          <!-- Dropdown menu -->
+          <div class="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700 rounded-xl" id="notification-dropdown" data-popper-placement="bottom" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1265px, 561px);">
+            <div class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-600 dark:text-gray-300">
+              Sepetim
+            </div>
+            <div>
+             <div class="w-full mx-auto bg-white border border-gray-200 flex shop-bag">
+            <div class="">
+                <img class="w-full h-56 object-cover rounded-t-lg" src="https://via.placeholder.com/300x200" alt="Ürün 1">
+            </div>
+           <div> <div class="px-4 w-full mt-2">
+                <h3 class="text-xl font-semibold text-gray-800">Ürün 1</h3>
+            </div>
+            <div class="px-4 w-full">
+                <p class="text-gray-500 mt-2">Bu, harika bir ürün. Kullanıcı dostu ve dayanıklı.</p>
+            </div>
+               
+            <div class="px-4 w-full">
+                <span class="text-lg font-bold text-gray-900">₺99.99</span>
+            </div></div>
+           
+        </div>
+              
+                <div class="w-full mx-auto bg-white border border-gray-200 flex shop-bag">
+            <div class="">
+                <img class="w-full h-56 object-cover rounded-t-lg" src="https://via.placeholder.com/300x200" alt="Ürün 1">
+            </div>
+           <div> <div class="px-4 w-full mt-2">
+                <h3 class="text-xl font-semibold text-gray-800">Ürün 1</h3>
+            </div>
+            <div class="px-4 w-full">
+                <p class="text-gray-500 mt-2">Bu, harika bir ürün. Kullanıcı dostu ve dayanıklı.</p>
+            </div>
+               
+            <div class="px-4 w-full">
+                <span class="text-lg font-bold text-gray-900">₺99.99</span>
+            </div></div>
+           
+        </div>
+            </div>
+            <a href="#" class="block py-2 text-md font-medium text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-600 dark:text-white dark:hover:underline">
+              <div class="inline-flex items-center">
+                <svg aria-hidden="true" class="mr-2 w-4 h-4 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                </svg>
+                Sepetimi Göster
+              </div>
+            </a>
+          </div>
+          <!-- Apps -->
+          <button type="button" data-dropdown-toggle="apps-dropdown" class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <span class="sr-only">View notifications</span>
+            <!-- Icon -->
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+          </button>
+          <!-- Dropdown menu -->
+          <div class="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600 rounded-xl" id="apps-dropdown" data-popper-placement="bottom" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1309px, 561px);">
+            <div class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-600 dark:text-gray-300">
+              Apps
+            </div>
+            <div class="grid grid-cols-3 gap-4 p-4">
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">Sales</div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">Users</div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">Inbox</div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">
+                  Profile
+                </div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">
+                  Settings
+                </div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"></path>
+                  <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">
+                  Products
+                </div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">
+                  Pricing
+                </div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">
+                  Billing
+                </div>
+              </a>
+              <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                <svg aria-hidden="true" class="mx-auto mb-1 w-7 h-7 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                </svg>
+                <div class="text-sm text-gray-900 dark:text-white">
+                  Logout
+                </div>
+              </a>
+            </div>
+          </div>
+          <button type="button" class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
+            <span class="sr-only">Open user menu</span>
+            <img class="w-8 h-8 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png" alt="user photo">
+          </button>
+          <!-- Dropdown menu -->
+          <div class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl" id="dropdown" data-popper-placement="bottom" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1357px, 557px);">
+            <div class="py-3 px-4">
+              <span class="block text-sm font-semibold text-gray-900 dark:text-white">Neil Sims</span>
+              <span class="block text-sm text-gray-900 truncate dark:text-white">name@flowbite.com</span>
+            </div>
+            <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+              <li>
+                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">My profile</a>
+              </li>
+              <li>
+                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Account settings</a>
+              </li>
+            </ul>
+            <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+              <li>
+                <a href="#" class="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"><svg class="mr-2 w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                  </svg>
+                  My likes</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"><svg class="mr-2 w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
+                  </svg>
+                  Collections</a>
+              </li>
+              <li>
+                <a href="#" class="flex justify-between items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  <span class="flex items-center">
+                    <svg aria-hidden="true" class="mr-2 w-5 h-5 text-primary-600 dark:text-primary-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path>
+                    </svg>
+                    Pro version
+                  </span>
+                  <svg aria-hidden="true" class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+            <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+              <li>
+                <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav></div>  
+
+       
+        <div class="mb-2 bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700">
+      
+
+        <div class="inline-block mr-4">    <button id="filterBtn" class="colorDisplay">Filtrele</button>
+        <!-- Filtreleme Paneli -->
+        <div id="filterPanel">
+            <button id="closePanel">&times;</button>
+            <h3>Filtrele</h3>
+            <div class="filter-container">
+                <div>
+                    <label for="categorySelect">Kategori:</label>
+                    <select id="categorySelect">
+                        <option value="">Seçiniz</option>
+                        <option value="elektronik">Elektronik</option>
+                       <option value="telefon">Telefon</option>
+                        <option value="giyim">Giyim</option>
+                       
+                    </select>
+                </div>
+                <div>
+                    <label for="brandSelect">Marka:</label>
+                    <select id="brandSelect">
+                        <option value="">Seçiniz</option>
+                        <option value="bosch">Bosch</option>
+                        <option value="demirdokum">Demirdöküm</option>
+                        <option value="broadlink">Broadlink</option>
+                        <option value="ablukaonline">ablukaonline</option>
+                        <option value="apple">Apple</option>
+                    </select>
+                </div>
+            </div>
+            <button class="colorDisplay" id="applyFilters">Uygula</button>
+        </div>
+    </div>
+   
+           
+             <div class=" hidden float-right lg:inline-block mr-4">
+            <div class="flex mb-6">
+                <button id="gridViewBtn" onclick="toggleView" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg mr-4">
+                    <!-- Grid Icon -->
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M4.857 3A1.857 1.857 0 0 0 3 4.857v4.286C3 10.169 3.831 11 4.857 11h4.286A1.857 1.857 0 0 0 11 9.143V4.857A1.857 1.857 0 0 0 9.143 3H4.857Zm10 0A1.857 1.857 0 0 0 13 4.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 21 9.143V4.857A1.857 1.857 0 0 0 19.143 3h-4.286Zm-10 10A1.857 1.857 0 0 0 3 14.857v4.286C3 20.169 3.831 21 4.857 21h4.286A1.857 1.857 0 0 0 11 19.143v-4.286A1.857 1.857 0 0 0 9.143 13H4.857Zm10 0A1.857 1.857 0 0 0 13 14.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 21 19.143v-4.286A1.857 1.857 0 0 0 19.143 13h-4.286Z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <button id="listViewBtn" onclick="toggleView" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg">
+                    <!-- List Icon -->
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"/>
+                    </svg>
+                </button>
+            </div> </div>      
+        </div>
+      <div class="w-full grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 boxview">
+        <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="elektronik" data-brand="bosch">
+            <div class="w-full flex items-center justify-center relative product-img">
+                <img class="p-2 h-56 rounded-t-lg" src="https://media3.bosch-home.com/Product_Shots/1200x675/17810914_website_HC_T12_BGS41POW2_BPlus4_PowerImage1_def.jpg" alt="Ürün 1">
+             
+            </div>
+            <div class="px-4 w-full mt-2">
+                <h3 class="text-xl font-semibold text-gray-800">Bosch</h3>
+            </div>
+            <div class="px-4 w-full">
+                <p class="text-gray-500 h-12 mt-2">Toz Torbasız Elektrikli Süpürge</p>
+            </div>
+            <div class="px-4 w-full">
+                 <span class="text-lg font-bold text-gray-500 line-through">199.99₺</span>
+                <span class="text-lg font-bold text-red-500">99.99₺</span>
+            </div>
+            <div class="px-4 w-full mb-2">
+                <div class="mt-4 flex items-center justify-between shop-bag">
+                    <button class="px-4 mb-2 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay" >Sepete Ekle</button>
+                    <div><span class="px-1 bg-gray-200 font-semibold rounded-lg  text-red-500">Stokta Yok</span></div>
+                </div>
+            </div>
+        </div>
+
+             <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="elektronik" data-brand="demirdokum">
+            <div class="w-full flex items-center justify-center relative product-img">
+                <img class="p-2 h-56 rounded-t-lg" src="https://cdn.myikas.com/images/7e15c393-3547-46a9-9c85-ad9278bddac1/675053fa-ba73-41db-bbdd-06b073f5875b/1080/demirdokum-nitromix-p-35kw-30.jpg" alt="Ürün 1">
+                
+            </div>
+            <div class="px-4 w-full mt-2">
+                <h3 class="text-xl font-semibold text-gray-800">Demirdöküm</h3>
+            </div>
+            <div class="px-4 w-full">
+                <p class="text-gray-500 h-12 mt-2">Nitromix P 35 (Hep)</p>
+            </div>
+           <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+            <div class="px-4 w-full mb-2">
+                <div class="mt-4 flex items-center justify-between shop-bag">
+                    <button class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay" >Sepete Ekle</button>
+                    <div><span class="px-1 bg-gray-200 tex-sm font-semibold rounded-lg  text-green-500">Az Sayıda Ürün</span></div>
+                </div>
+            </div>
+        </div>
+<div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="elektronik" data-brand="broadlink">
+    <div class="w-full flex items-center justify-center relative product-img">
+        <img class="p-2 h-56 rounded-t-lg" src="https://comio.projeshop.com/images_buyuk/f93/Broadlink-Rm-Pro-3G-4G-Wi-Fi-Inf_10093_1.jpg" alt="Ürün 1">
+    </div>
+    <div class="px-4 w-full mt-2">
+        <h3 class="text-xl font-semibold text-gray-800">Broadlink</h3>
+    </div>
+    <div class="px-4 w-full">
+        <p class="text-gray-500 h-12 mt-2">Infrared Mini Akıllı Kumanda Merkezi</p>
+    </div>
+    <div class="px-4 w-full">
+        <span class="text-lg font-bold text-red-500">99.99₺</span>
+    </div>
+    <div class="px-4 w-full mb-2">
+        <div class="mt-4 flex items-center justify-between shop-bag">
+            <button onclick="openPopup()" class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay">Sepete Ekle</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="productPopup" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full h-full bg-gray-500 bg-opacity-50 flex items-center justify-center">
+    <div class="relative w-full max-w-5xl bg-white rounded-lg p-6" aria-hidden="false">
+        <!-- Kapanma Butonu -->
+        <button onclick="closePopup()" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="flex space-x-4">
+           
+            <div class="w-2/4">
+                
+                <div id="gallery" class="relative w-full" data-carousel="slide">
+                    
+                    <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+                        
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                            <img src="https://eighteen2.projeshop.com/images_buyuk/f93/Broadlink-Rm-Pro-3G-4G-Wi-Fi-Inf_10093_1.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
+                        </div>
+                       
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item="active">
+                            <img src="https://eighteen2.projeshop.com/images_buyuk/f93/Broadlink-Rm-Pro-3G-4G-Wi-Fi-Inf_10093_2.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
+                        </div>
+                    </div>
+                   
+                    <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                            <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                            </svg>
+                            <span class="sr-only">Previous</span>
+                        </span>
+                    </button>
+                    <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                            <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                            </svg>
+                            <span class="sr-only">Next</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+        
+            <div class="w-2/4">
+                <h3 class="text-xl font-semibold text-gray-800">Broadlink</h3>
+                <p class="text-gray-500 mt-2">Infrared Mini Akıllı Kumanda Merkezi - Evdeki tüm elektronik cihazları kontrol edebilmenizi sağlar.</p>
+                <div class="mt-4">
+                    <span class="text-lg font-bold text-red-500">99.99₺</span>
+                </div>
+                <div class="mt-6">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-md" id="addToCartBtn">Sepete Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="addedMessage"  class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-xl font-semibold mb-4">Teşekkürler!</h3>
+            <p>Ürün sepete eklendi.</p>
+        </div>
+    </div>
+
+
+<script>
+    // Detay Popup'ı açma
+    function openPopup() {
+        document.getElementById('productPopup').classList.remove('hidden');
+    }
+
+    
+    function closePopup() {
+        document.getElementById('productPopup').classList.add('hidden');
+    }
+
+   
+    document.getElementById('addToCartBtn').addEventListener('click', function() {
+        // Popup'ı kapat
+        closePopup();
+
+      
+        const addedMessage = document.getElementById('addedMessage');
+        addedMessage.classList.remove('hidden');
+
+        
+        setTimeout(function() {
+            addedMessage.classList.add('hidden');
+        }, 2000); 
+    });
+</script>
+
+
+               <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="giyim" data-brand="ablukaonline">
+        <div class="w-full flex items-center justify-center relative product-img"><img class="p-2 h-56 rounded-t-lg" src="https://static.ticimax.cloud/52816/uploads/urunresimleri/buyuk/erkek-baggy-fit-kumas-pantolon-kahve-4d0e-b.jpg" alt="Ürün 1">
+                   <div class="color-options"><div><span class="color-option"></span><span class="color-option"></span></div></div>
+                   </div>
+               <div class="px-4 w-full mt-2"> <h3 class="text-xl font-semibold text-gray-800">ablukaonline</h3></div>
+               <div class="px-4 w-full"> <p class="text-gray-500 h-12 mt-2">Erkek Baggy Fit Kumaş Pantolon Kahve</p></div>
+               <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+        <div class="px-4 w-full mb-2">
+         
+         
+          <div class="mt-4 flex items-center justify-between shop-bag">
+           
+            <button class="px-4 py-2 bg-blue-600 mb-2 text-white rounded-lg hover:bg-blue-700 colorDisplay" id="addToCartBtn">Sepete Ekle</button>
+          </div>
+        </div>
+      </div>
+               <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="telefon" data-brand="apple">
+        <div class="w-full flex items-center justify-center relative product-img"><img class="p-2 h-56 rounded-t-lg" src="https://cdn.akakce.com/z/apple/iphone-15-pro-max-512-gb-siyah-titanyum.jpg" alt="Ürün 1"></div>
+               <div class="px-4 w-full mt-2"> <h3 class="text-xl font-semibold text-gray-800">Apple</h3></div>
+               <div class="px-4 w-full"> <p class="text-gray-500 mt-2">iPhone 15 Pro Max 512 GB Siyah Titanyum</p></div>
+             <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+        <div class="px-4 w-full mb-2">
+         
+         
+          <div class="mt-4 flex items-center justify-between shop-bag">
+            
+            <button class="px-4 py-2 bg-blue-600 mb-2 text-white rounded-lg hover:bg-blue-700 colorDisplay">Sepete Ekle</button>
+          </div>
+        </div>
+      </div>
+              <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="telefon" data-brand="apple">
+        <div class="w-full flex items-center justify-center relative product-img"><img class="p-2 h-56 rounded-t-lg" src="https://cdn.akakce.com/z/apple/iphone-15-pro-max-512-gb-siyah-titanyum.jpg" alt="Ürün 1"></div>
+               <div class="px-4 w-full mt-2"> <h3 class="text-xl font-semibold text-gray-800">Apple</h3></div>
+               <div class="px-4 w-full"> <p class="text-gray-500 mt-2">iPhone 15 Pro Max 512 GB Siyah Titanyum</p></div>
+             <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+        <div class="px-4 w-full mb-2">
+         
+         
+          <div class="mt-4 flex items-center justify-between shop-bag">
+           
+            <button class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay">Sepete Ekle</button>
+             <div><span class="px-1 bg-gray-200 rounded-lg font-semibold text-red-500">Stokta Yok</span></div>
+          </div>
+        </div>
+      </div>  
+            <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="elektronik" data-brand="bosch">
+            <div class="w-full flex items-center justify-center relative product-img">
+                <img class="p-2 h-56 rounded-t-lg" src="https://media3.bosch-home.com/Product_Shots/1200x675/17810914_website_HC_T12_BGS41POW2_BPlus4_PowerImage1_def.jpg" alt="Ürün 1">
+             
+            </div>
+            <div class="px-4 w-full mt-2">
+                <h3 class="text-xl font-semibold text-gray-800">Bosch</h3>
+            </div>
+            <div class="px-4 w-full">
+                <p class="text-gray-500 h-12 mt-2">Toz Torbasız Elektrikli Süpürge</p>
+            </div>
+            <div class="px-4 w-full">
+                 <span class="text-lg font-bold text-gray-500 line-through">199.99₺</span>
+                <span class="text-lg font-bold text-red-500">99.99₺</span>
+            </div>
+            <div class="px-4 w-full mb-2">
+                <div class="mt-4 flex items-center justify-between shop-bag">
+                    <button class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay" >Sepete Ekle</button>
+                </div>
+            </div>
+        </div>
+
+             <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="elektronik" data-brand="demirdokum">
+            <div class="w-full flex items-center justify-center relative product-img">
+                <img class="p-2 h-56 rounded-t-lg" src="https://cdn.myikas.com/images/7e15c393-3547-46a9-9c85-ad9278bddac1/675053fa-ba73-41db-bbdd-06b073f5875b/1080/demirdokum-nitromix-p-35kw-30.jpg" alt="Ürün 1">
+                
+            </div>
+            <div class="px-4 w-full mt-2">
+                <h3 class="text-xl font-semibold text-gray-800">Demirdöküm</h3>
+            </div>
+            <div class="px-4 w-full">
+                <p class="text-gray-500 h-12 mt-2">Nitromix P 35 (Hep)</p>
+            </div>
+          <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+            <div class="px-4 w-full mb-2">
+                <div class="mt-4 flex items-center justify-between shop-bag">
+                    <button class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay" >Sepete Ekle</button>
+                </div>
+            </div>
+        </div>
+               <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="elektronik" data-brand="broadlink">
+        <div class="w-full flex items-center justify-center relative product-img"><img class="p-2 h-56 rounded-t-lg" src="https://comio.projeshop.com/images_buyuk/f93/Broadlink-Rm-Pro-3G-4G-Wi-Fi-Inf_10093_1.jpg" alt="Ürün 1"></div>
+               <div class="px-4 w-full mt-2"> <h3 class="text-xl font-semibold text-gray-800">Broadlink</h3></div>
+               <div class="px-4 w-full"> <p class="text-gray-500 h-12 mt-2">Infrared Mini Akıllı Kumanda Merkezi</p></div>
+               <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+        <div class="px-4 w-full mb-2">
+         
+         
+          <div class="mt-4 flex items-center justify-between shop-bag">
+           
+            <button class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay">Sepete Ekle</button>
+          </div>
+        </div>
+      </div>
+               <div class="w-full mx-auto bg-white border border-gray-200 rounded-lg shadow-lg product-list" data-category="giyim" data-brand="ablukaonline">
+        <div class="w-full flex items-center justify-center relative product-img"><img class="p-2 h-56 rounded-t-lg" src="https://static.ticimax.cloud/52816/uploads/urunresimleri/buyuk/erkek-baggy-fit-kumas-pantolon-kahve-4d0e-b.jpg" alt="Ürün 1">
+                   <div class="color-options"><div><span class="color-option"></span><span class="color-option"></span></div></div>
+                   </div>
+               <div class="px-4 w-full mt-2"> <h3 class="text-xl font-semibold text-gray-800">ablukaonline</h3></div>
+               <div class="px-4 w-full"> <p class="text-gray-500 h-12 mt-2">Erkek Baggy Fit Kumaş Pantolon Kahve</p></div>
+               <div class="px-4 w-full"> <span class="text-lg font-bold text-red-500">99.99₺</span></div>
+        <div class="px-4 w-full mb-2">
+         
+         
+          <div class="mt-4 flex items-center justify-between shop-bag">
+           
+            <button class="px-4 py-2 mb-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 colorDisplay" id="addToCartBtn">Sepete Ekle</button>
+          </div>
+        </div>
+      </div>
+            
+             
+           
+          
+      </div>
+      
+  <!-- Varyant Seçim Popup'ı -->
+<div id="variantPopup" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 hidden">
+    <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
+        <!-- Kapatma butonu sağ üst köşede -->
+        <button id="closePopup" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+
+        <h3 class="text-xl font-semibold mb-4">Varyant Seçin</h3>
+        
+        <div class="mb-4">
+            <label for="colorSelect" class="block text-sm font-medium text-gray-700">Renk:</label>
+            <div class="flex space-x-2 mt-2" id="colorSelect">
+                <button class="w-8 h-8 rounded-full" style="background-color: #ff0000;" data-color="red"></button>
+                <button class="w-8 h-8 rounded-full" style="background-color: #0000ff;" data-color="blue"></button>
+                <button class="w-8 h-8 rounded-full" style="background-color: #00ff00;" data-color="green"></button>
+                <button class="w-8 h-8 rounded-full" style="background-color: #ff9900;" data-color="orange"></button>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label for="sizeSelect" class="block text-sm font-medium text-gray-700">Boyut:</label>
+            <select id="sizeSelect" class="mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="s">S</option>
+                <option value="m">M</option>
+                <option value="l">L</option>
+            </select>
+        </div>
+
+        <div class="mt-4 flex justify-between">
+            <button id="cancelPopup" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">İptal</button>
+            <button id="confirmAddToCart" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 colorDisplay">Sepete Ekle</button>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Teşekkür Popup'ı -->
+    <div id="thankYouPopup" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-xl font-semibold mb-4">Teşekkürler!</h3>
+            <p>Ürün sepete eklendi.</p>
+        </div>
+    </div>
+
+    <script>
+    $(document).ready(function() {
+    // varyant popup
+    $('.product-list').on('click', '#addToCartBtn', function() {
+        $('#variantPopup').removeClass('hidden');
+    });
+
+    $('#confirmAddToCart').click(function() {
+        var color = $('#colorSelect').val();
+        var size = $('#sizeSelect').val();
+        
+        $('#variantPopup').addClass('hidden');
+        $('#thankYouPopup').removeClass('hidden');
+
+        setTimeout(function() {
+            $('#thankYouPopup').addClass('hidden');
+        }, 2000);
+    });
+
+    $('#closePopup').click(function() {
+        $('#variantPopup').addClass('hidden');
+    });
+
+    $('#cancelPopup').click(function() {
+        $('#variantPopup').addClass('hidden');
+    });
+
+
+    $('#colorSelect button').click(function() {
+        $('#colorSelect button').removeClass('active');
+
+        $(this).addClass('active');
+
+        $('#colorSelect').val($(this).data('color'));  
+    });
+});
+
+    </script>
+      <script>
+        $(document).ready(function() {
+            // Filtreleme paneli
+            $('#filterBtn').click(function() {
+                $('#filterPanel').fadeToggle();
+            });
+            $('#applyFilters').click(function() {
+                filterProducts();
+                $('#filterPanel').fadeOut();
+            });
+
+            $('#closePanel').click(function() {
+                $('#filterPanel').fadeOut();
+            });
+
+            function filterProducts() {
+                var selectedCategory = $('#categorySelect').val();
+                var selectedBrand = $('#brandSelect').val();
+
+                $('.product-list').each(function() {
+                    var productCategory = $(this).data('category');
+                    var productBrand = $(this).data('brand');
+
+                    if (
+                        (selectedCategory === '' || productCategory === selectedCategory) &&
+                        (selectedBrand === '' || productBrand === selectedBrand)
+                    ) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+
+            $('#categorySelect, #brandSelect').change(function() {
+                filterProducts();
+            });
+            filterProducts();
+        });
+    </script>
+
+   
+    </main>
+  </div>
+          <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
+          <script>
+        $(document).ready(function() {
+            // Arama işlevi
+            $('#topbar-search').on('input', function() {
+                var searchQuery = $(this).val().toLowerCase(); 
+                $('.product-list').each(function() {
+                    var productName = $(this).find('h3').text().toLowerCase(); 
+                    var productDescription = $(this).find('p').text().toLowerCase(); 
+                    if (productName.includes(searchQuery) || productDescription.includes(searchQuery)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
+          <script>
+            window.addEventListener("load", function(event) {
+              const links = document.querySelectorAll("a");
+              const buttons = document.querySelectorAll("button");
+  
+              links.forEach(function(link) {
+                link.addEventListener("click", function(ev) {
+                  ev.preventDefault();
+                });
+              });
+  
+              buttons.forEach(function(button) {
+                button.addEventListener("click", function(ev) {
+                  ev.preventDefault();
+                });
+              });
+            });
+          </script>
+            <script>
+            
+            $(document).ready(function() {
+    $('#gridViewBtn').click(function() {
+        $('.grid').addClass('grid-cols-2  sm:grid-cols-2 lg:grid-cols-5 boxview').removeClass('listView');
+        $('.product-list').removeClass('flex items-center justify-center ');
+    });
+
+    $('#listViewBtn').click(function() {
+        $('.grid').removeClass('grid-cols-2  sm:grid-cols-2 lg:grid-cols-5 boxview').addClass('listView');
+        $('.product-list').addClass('flex items-center justify-center');
+    });
+});
+            </script>
+    
+            
+      
+<script>
+    // arka plan renkleri
+    const dropdownButton = document.querySelector('.custom-dropdown-button');
+    const dropdownMenu = document.querySelector('.custom-dropdown');
+    dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('show');
+    });
+    function applyColor(selectedColor) {
+        document.querySelectorAll('.colorDisplay').forEach(display => {
+            display.style.background = selectedColor;
+        });
+    }
+    document.querySelectorAll('.dropdown-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedColor = this.style.background;
+            
+            applyColor(selectedColor);
+
+            dropdownMenu.classList.remove('show');
+        });
+    });
+    window.addEventListener('load', () => {
+        const firstOption = document.querySelector('.dropdown-option');
+        const firstColor = firstOption.style.background;
+        
+        applyColor(firstColor);
+    });
+</script>
+            
+            
+        
+      </body></html>
